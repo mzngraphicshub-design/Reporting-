@@ -87,29 +87,33 @@ tr:hover td{background:var(--foam)}
 #login p{margin:-6px 0 14px;color:var(--mute);font-size:13px}
 body.staff .adm{display:none!important}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.iss{background:var(--bg);border:1px solid var(--line);border-left:4px solid var(--due);border-radius:14px;padding:12px;margin-bottom:10px}.iss.solved{border-left-color:var(--paid)}.iss p{margin:7px 0}.iss small{display:block;color:var(--mute);font-size:10px;letter-spacing:.12em;font-weight:700}
+.note{color:var(--mute);font-size:12px;font-weight:700;margin:14px 0 6px;letter-spacing:.06em;text-transform:uppercase}
 </style>
 </head>
 <body>
 <div id="app" class="hide"><header><div class="hd"><div><small>WATER CARD SYSTEM</small><h1 id="hi">Dashboard</h1><p id="dt"></p></div><div class="who"><span id="who"></span><br><button class="btn ghost sm" id="out">Logout</button></div></div><svg class="wave" viewBox="0 0 400 24" preserveAspectRatio="none"><path d="M0 12C60 0 120 24 200 12S340 0 400 12V24H0Z"/></svg></header>
 <nav id="nav">
   <button data-t="dash" class="on"><i>🏠</i>Home</button>
-  <button data-t="day"><i>🪪</i>Daily</button>
-  <button data-t="entry"><i>🧾</i>Entry</button>
-  <button data-t="mon"><i>📅</i>Monthly</button>
   <button data-t="cust"><i>👥</i>Customers</button>
-  <button data-t="hist"><i>📋</i>History</button>
-  <button data-t="usr" class="adm"><i>🔐</i>Users</button>
+  <button data-t="cards"><i>🪪</i>Cards</button>
+  <button data-t="day"><i>💧</i>Daily</button>
+  <button data-t="mat"><i>📦</i>Materials</button>
+  <button data-t="iss"><i>🛠️</i>Issues</button>
+  <button data-t="entry"><i>🧾</i>Bills</button>
+  <button data-t="mon"><i>📅</i>Monthly</button>
+  <button data-t="usr" class="adm"><i>🔐</i>Operators</button>
 </nav>
 <main>
 <section id="dash">
-  <div class="quick"><button data-go="day:sell"><i>🪪</i>Sell card</button><button data-go="day:recharge"><i>💧</i>Recharge</button><button data-go="entry"><i>🧾</i>Meter</button><button data-go="cust"><i>👤</i>Customer</button></div>
+  <div class="quick"><button data-go="cust"><i>🪪</i>Sell card</button><button data-go="cards"><i>🔁</i>Replace</button><button data-go="day"><i>💧</i>Recharge</button><button data-go="iss"><i>🛠️</i>Issue</button></div>
   <div class="grid" id="stats"></div>
   <div class="box"><h2>Usage by month (units)</h2><div class="bars" id="bars"></div></div>
   <div class="box"><h2>Customers with due</h2><div class="wrap" id="dueList"></div></div>
 </section>
 
 <section id="entry" class="hide">
-  <div class="box"><h2>New monthly entry</h2>
+  <div class="box"><h2>New meter entry</h2>
   <form id="eform">
     <label>Customer<select id="e_cid" required></select></label>
     <label>Month<input type="month" id="e_month" required></label>
@@ -120,28 +124,74 @@ body.staff .adm{display:none!important}
     <div class="preview" id="e_prev_box">Usage and bill will show here.</div>
     <div class="full"><button class="btn" type="submit">Save entry</button></div>
   </form></div>
+
+  <div class="box"><div class="row"><h2 style="margin:0">All entries</h2>
+    <div><button class="btn ghost sm" id="csv">Download CSV</button> <button class="btn ghost sm" id="bk">Backup</button> <button class="btn ghost sm adm" id="rs">Restore</button></div></div>
+  <div class="wrap" id="hList"></div></div>
+  <input type="file" id="rsf" accept="application/json" class="hide">
 </section>
 
 <section id="day" class="hide">
- <div class="box"><h2>Daily entry</h2>
- <form id="dform">
-  <label>Type<select id="d_type"><option value="sell">Card sell</option><option value="replace">Card replace</option><option value="damage">Card damage</option><option value="recharge">Customer recharge</option></select></label>
-  <label>Date<input type="date" id="d_date"></label>
-  <label>Customer<select id="d_cid"></select></label>
-  <label data-for="sell replace damage"><span id="d_card_l">Card number</span><input id="d_card"></label>
-  <label data-for="replace">New card number<input id="d_new"></label>
-  <label><span id="d_amt_l">Card price</span><input type="number" id="d_amt" min="0" step="any"></label>
-  <label>Note<input id="d_note" placeholder="Optional"></label>
-  <div class="full"><button class="btn" type="submit">Save</button></div>
- </form></div>
- <div class="box"><div class="row"><h2 style="margin:0">Day summary</h2><input type="date" id="d_day" style="max-width:180px"></div><div class="grid" id="d_stats"></div></div>
+ <div class="box"><h2>💧 Daily recharge (amount only)</h2><form id="rgform"><label>Date<input type="date" class="td" id="rg_date"></label><label>Recharge amount<input type="number" id="rg_amt" min="1" step="any" required></label><label>Note<input id="rg_note" placeholder="Optional"></label><div class="full"><button class="btn">Save recharge</button></div></form></div>
+ <div class="box"><div class="row"><h2 style="margin:0">Daily hisab</h2><input type="date" id="d_day" style="max-width:180px"></div>
+  <div class="note">Card stock</div><div class="grid" id="d_stats"></div><div class="note">Cash</div><div class="grid" id="d_cash"></div></div>
+ <div class="box"><h2>By operator</h2><div class="wrap" id="d_ops"></div></div>
  <div class="box"><h2>Day entries</h2><div class="wrap" id="d_list"></div></div>
+ <div class="box adm"><h2>Starting stock</h2><form id="stkform"><label>Cards in stock before first entry<input type="number" id="os" min="0" required></label><div class="full"><button class="btn">Save</button></div></form></div>
+</section>
+
+<section id="cards" class="hide">
+ <div class="box"><h2>🔁 Card replace</h2><form id="rform">
+  <label>Date<input type="date" class="td" id="rp_date"></label>
+  <label>Customer<select id="rp_cid"></select></label>
+  <label>Old card<input id="rp_old" readonly></label>
+  <label>New card number<input id="rp_new" required></label>
+  <label>Replace fee<input type="number" id="rp_fee" min="0" step="any" value="0"></label>
+  <label>Note<input id="rp_note" placeholder="Optional"></label>
+  <div class="full"><button class="btn">Save replace</button></div></form></div>
+ <div class="box"><h2>⚠️ Card damage</h2><form id="dmform">
+  <label>Date<input type="date" class="td" id="dm_date"></label>
+  <label>Customer (optional)<select id="dm_cid"></select></label>
+  <label>Card number<input id="dm_card" required></label>
+  <label>Damaged card is<select id="dm_src"><option value="customer">Customer card</option><option value="stock">Stock card</option></select></label>
+  <label>Loss amount<input type="number" id="dm_loss" min="0" step="any" value="0"></label>
+  <label>Note<input id="dm_note" placeholder="Reason"></label>
+  <div class="full"><button class="btn">Save damage</button></div></form></div>
+ <div class="box"><h2>📥 Receive cards</h2><form id="rcform">
+  <label>Date<input type="date" class="td" id="rc_date"></label>
+  <label>Quantity<input type="number" id="rc_qty" min="1" required></label>
+  <label>Received from<input id="rc_from" placeholder="Supplier / office"></label>
+  <label>Note<input id="rc_note" placeholder="Optional"></label>
+  <div class="full"><button class="btn">Save received</button></div></form></div>
+ <div class="box"><h2>Recent card entries</h2><div class="wrap" id="c_list"></div></div>
+</section>
+
+<section id="mat" class="hide">
+ <div class="box"><h2>📦 Received materials</h2><form id="mform">
+  <label>Date<input type="date" class="td" id="mt_date"></label>
+  <label>Item<input id="mt_item" required></label>
+  <label>Quantity<input type="number" id="mt_qty" min="0" step="any" required></label>
+  <label>Unit<input id="mt_unit" value="pcs"></label>
+  <label>Received from<input id="mt_from"></label>
+  <label>Note<input id="mt_note" placeholder="Optional"></label>
+  <div class="full"><button class="btn">Save material</button></div></form></div>
+ <div class="box"><h2>Received list</h2><div class="wrap" id="mt_tbl"></div></div>
+</section>
+
+<section id="iss" class="hide">
+ <div class="box"><h2>🛠️ Problem / Finding / Solving</h2><form id="iform">
+  <label>Date<input type="date" class="td" id="is_date"></label>
+  <label class="full">Problem<input id="is_problem" required></label>
+  <label class="full">Finding<input id="is_finding" placeholder="What was found"></label>
+  <label class="full">Solving<input id="is_solution" placeholder="How it was solved (leave empty if open)"></label>
+  <div class="full"><button class="btn">Save</button></div></form></div>
+ <div class="box"><h2>All cards</h2><div id="i_list"></div></div>
 </section>
 
 <section id="usr" class="hide adm">
- <div class="box"><h2>Add user</h2>
- <form id="uform"><label>Username<input id="u_user" required></label><label>Password<input id="u_pass" type="password" minlength="4" required></label><label>Role<select id="u_role"><option value="staff">Staff</option><option value="admin">Admin</option></select></label><div class="full"><button class="btn" type="submit">Add user</button></div></form></div>
- <div class="box"><h2>Users</h2><div class="wrap" id="u_list"></div></div>
+ <div class="box"><h2>Add operator (login access)</h2>
+ <form id="uform"><label>Operator name<input id="u_name" required></label><label>Username<input id="u_user" required></label><label>Password<input id="u_pass" type="password" minlength="4" required></label><label>Role<select id="u_role"><option value="staff">Operator</option><option value="admin">Admin</option></select></label><div class="full"><button class="btn" type="submit">Add user</button></div></form></div>
+ <div class="box"><h2>Operators &amp; admins</h2><div class="wrap" id="u_list"></div></div>
 </section>
 
 <section id="mon" class="hide">
@@ -152,24 +202,21 @@ body.staff .adm{display:none!important}
 </section>
 
 <section id="cust" class="hide">
-  <div class="box"><h2>Add customer</h2>
+  <div class="box"><h2>Add customer (card sell)</h2>
   <form id="cform">
     <label>Name<input id="c_name" required></label>
     <label>Card number<input id="c_card" required></label>
     <label>Phone<input id="c_phone" type="tel"></label>
     <label>Address<input id="c_addr"></label>
+    <label>Card price<input type="number" id="c_price" min="0" step="any" required></label>
+    <label>Sell date<input type="date" class="td" id="c_date"></label>
     <div class="full"><button class="btn" type="submit">Save customer</button></div>
   </form></div>
   <div class="box"><div class="row"><h2 style="margin:0">All customers</h2><input id="c_q" placeholder="Search name or card" style="max-width:220px"></div>
   <div class="wrap" id="cList"></div></div>
 </section>
 
-<section id="hist" class="hide">
-  <div class="box"><div class="row"><h2 style="margin:0">All entries</h2>
-    <div><button class="btn ghost sm" id="csv">Download CSV</button> <button class="btn ghost sm" id="bk">Backup</button> <button class="btn ghost sm adm" id="rs">Restore</button></div></div>
-  <div class="wrap" id="hList"></div></div>
-  <input type="file" id="rsf" accept="application/json" class="hide">
-</section>
+
 </main></div>
 <div class="toast" id="toast"></div>
 <div id="login"><div class="box"><div class="logo">💧</div><h2 id="l_title">Login</h2><p>Water Card System</p><form id="lform" style="grid-template-columns:1fr"><label>Username<input id="l_user" autocomplete="username" required></label><label>Password<input id="l_pass" type="password" autocomplete="current-password" required></label><button class="btn" id="l_btn" type="submit">Login</button></form></div></div>
@@ -179,8 +226,8 @@ const $=s=>document.querySelector(s);
 const KEY='waterCardData';
 let db={customers:[],entries:[]};
 try{const r=localStorage.getItem(KEY);if(r)db=JSON.parse(r)}catch(e){}
-db.txns=db.txns||[];db.users=db.users||[];
-if(!db.seeded){if(!db.users.some(u=>u.user==='karwanbazar'))db.users.unshift({user:'karwanbazar',hash:'ab4a3ec9dc64e37f4bf7edc742df8b808c5d5d889eca16f7815951c578b2db16',role:'admin'});db.seeded=true;try{localStorage.setItem(KEY,JSON.stringify(db))}catch(e){}}
+db.txns=db.txns||[];db.users=db.users||[];db.mats=db.mats||[];db.issues=db.issues||[];db.openStock=db.openStock||0;
+if(!db.seeded){if(!db.users.some(u=>u.user==='karwanbazar'))db.users.unshift({name:'Admin',user:'karwanbazar',hash:'ab4a3ec9dc64e37f4bf7edc742df8b808c5d5d889eca16f7815951c578b2db16',role:'admin'});db.seeded=true;try{localStorage.setItem(KEY,JSON.stringify(db))}catch(e){}}
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(db))}catch(e){toast('Could not save in this browser')}};
 const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
 const money=n=>'৳'+Math.round(n).toLocaleString('en-IN');
@@ -191,7 +238,7 @@ function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');se
 
 document.querySelectorAll('#nav button').forEach(b=>b.onclick=()=>{
   document.querySelectorAll('#nav button').forEach(x=>x.classList.toggle('on',x===b));
-  ['dash','entry','day','mon','cust','hist','usr'].forEach(s=>$('#'+s).classList.toggle('hide',s!==b.dataset.t));
+  ['dash','cust','cards','day','mat','iss','entry','mon','usr'].forEach(s=>$('#'+s).classList.toggle('hide',s!==b.dataset.t));
   render();
 });
 
@@ -202,7 +249,9 @@ function render(){
     <div class="stat"><b>${db.customers.length}</b><span>Customers</span></div>
     <div class="stat"><b>${money(tb)}</b><span>Total billed</span></div>
     <div class="stat"><b>${money(tp)}</b><span>Collected</span></div>
-    <div class="stat"><b>${money(sumT(tx(today()),['sell','replace','recharge']))}</b><span>Today cash in</span></div>`;
+    <div class="stat"><b>${money(sumT(tx(today()),['sell','replace','recharge']))}</b><span>Today cash in</span></div>
+    <div class="stat"><b>${stock('9999',true)}</b><span>Cards in stock</span></div>
+    <div class="stat"><b>${db.issues.filter(i=>i.status!=='solved').length}</b><span>Open issues</span></div>`;
   // bars
   const m={};ents.forEach(e=>m[e.month]=(m[e.month]||0)+Math.max(0,e.curr-e.prev));
   const ks=Object.keys(m).sort().slice(-8),mx=Math.max(1,...ks.map(k=>m[k]));
@@ -219,13 +268,21 @@ function render(){
   const mm={};ents.forEach(e=>{const o=mm[e.month]=mm[e.month]||{n:0,u:0,b:0,p:0};o.n++;o.u+=Math.max(0,e.curr-e.prev);o.b+=bill(e);o.p+=e.paid});
   const mk=Object.keys(mm).sort().reverse();
   $('#m_all').innerHTML=mk.length?`<table><tr><th>Month</th><th>Entries</th><th>Units</th><th>Billed</th><th>Collected</th><th>Due</th></tr>${mk.map(k=>{const o=mm[k];return`<tr><td>${k}</td><td>${o.n}</td><td>${Math.round(o.u)}</td><td>${money(o.b)}</td><td>${money(o.p)}</td><td>${money(o.b-o.p)}</td></tr>`}).join('')}</table>`:'<div class="empty">No data yet.</div>';
-  // daily + users
-  const dd=$('#d_day');if(!dd.value)dd.value=today();if(!$('#d_date').value)$('#d_date').value=today();
-  const dt=tx(dd.value),cnt=t=>dt.filter(x=>x.type===t).length;
-  $('#d_stats').innerHTML=`<div class="stat hero"><b>${money(sumT(dt,['sell','replace','recharge']))}</b><span>Cash in</span></div><div class="stat"><b>${cnt('sell')}</b><span>Sold · ${money(sumT(dt,['sell']))}</span></div><div class="stat"><b>${cnt('replace')}</b><span>Replaced · ${money(sumT(dt,['replace']))}</span></div><div class="stat"><b>${cnt('damage')}</b><span>Damaged · loss ${money(sumT(dt,['damage']))}</span></div><div class="stat"><b>${money(sumT(dt,['recharge']))}</b><span>Recharge (${cnt('recharge')})</span></div>`;
-  $('#d_list').innerHTML=dt.length?`<table><tr><th>Type</th><th>Customer</th><th>Card</th><th>Amount</th><th>Note</th><th>By</th><th></th></tr>${dt.map(x=>`<tr><td>${TL[x.type]}</td><td>${x.cid?esc(cname(x.cid)):'Walk-in'}</td><td>${esc(x.card)}${x.nw?' → '+esc(x.nw):''}</td><td>${money(x.amount)}</td><td>${esc(x.note)}</td><td>${esc(x.by)}</td><td><button class="btn ghost sm adm" onclick="delT('${x.id}')">Delete</button></td></tr>`).join('')}</table>`:'<div class="empty">No entry for this day.</div>';
-  const dc=$('#d_cid'),dv=dc.value;dc.innerHTML='<option value="">'+(['sell','damage'].includes($('#d_type').value)?'Walk-in / none':'Select customer')+'</option>'+db.customers.map(c=>`<option value="${c.id}">${esc(c.name)} (${esc(c.card)})</option>`).join('');dc.value=dv;
-  $('#u_list').innerHTML=`<table><tr><th>User</th><th>Role</th><th></th></tr>${db.users.map(u=>`<tr><td>${esc(u.user)}</td><td>${u.role}</td><td><button class="btn ghost sm" onclick="delU('${u.user}')">Delete</button></td></tr>`).join('')}</table>`;
+  // stock, daily, cards, materials, issues, users
+  const dd=$('#d_day');if(!dd.value)dd.value=today();
+  const D=dd.value,dt=tx(D),cnt=t=>dt.filter(x=>x.type===t).length,qs=dt.filter(x=>x.type==='receive').reduce((a,x)=>a+(x.qty||0),0),dmS=dt.filter(x=>x.type==='damage'&&x.src==='stock').length;
+  $('#d_stats').innerHTML=`<div class="stat"><b>${stock(D,false)}</b><span>Opening stock</span></div><div class="stat"><b>+${qs}</b><span>Received</span></div><div class="stat"><b>-${cnt('sell')}</b><span>Sold (new customers)</span></div><div class="stat"><b>-${cnt('replace')}</b><span>Replaced</span></div><div class="stat"><b>-${dmS}</b><span>Damaged (stock)</span></div><div class="stat hero"><b>${stock(D,true)}</b><span>Closing stock</span></div>`;
+  $('#d_cash').innerHTML=`<div class="stat"><b>${money(sumT(dt,['sell']))}</b><span>Card sales</span></div><div class="stat"><b>${money(sumT(dt,['replace']))}</b><span>Replace fee</span></div><div class="stat"><b>${money(sumT(dt,['recharge']))}</b><span>Recharge</span></div><div class="stat hero"><b>${money(sumT(dt,['sell','replace','recharge']))}</b><span>Total cash in</span></div><div class="stat"><b>${money(sumT(dt,['damage']))}</b><span>Damage loss (${cnt('damage')})</span></div>`;
+  const ops=[...new Set(dt.map(x=>x.by))];
+  $('#d_ops').innerHTML=ops.length?`<table><tr><th>Operator</th><th>Entries</th><th>Cash in</th></tr>${ops.map(u=>{const a=dt.filter(x=>x.by===u);return`<tr><td>${esc(opName(u))}</td><td>${a.length}</td><td>${money(sumT(a,['sell','replace','recharge']))}</td></tr>`}).join('')}</table>`:EMPTY;
+  $('#d_list').innerHTML=txTable(dt);
+  $('#c_list').innerHTML=txTable(db.txns.filter(x=>['replace','damage','receive'].includes(x.type)).sort((a,b)=>b.date.localeCompare(a.date)).slice(0,25));
+  const opts=f=>'<option value="">'+f+'</option>'+db.customers.map(c=>`<option value="${c.id}">${esc(c.name)} (${esc(c.card)})</option>`).join('');
+  [['rp_cid','Select customer'],['dm_cid','None / stock card']].forEach(([i,f])=>{const e=$('#'+i),v=e.value;e.innerHTML=opts(f);e.value=v});
+  $('#os').value=db.openStock||0;
+  $('#mt_tbl').innerHTML=db.mats.length?`<table><tr><th>Date</th><th>Item</th><th>Qty</th><th>From</th><th>Received by</th><th>Note</th><th></th></tr>${[...db.mats].sort((a,b)=>b.date.localeCompare(a.date)||b.t-a.t).map(m=>`<tr><td>${m.date}</td><td>${esc(m.item)}</td><td>${m.qty} ${esc(m.unit)}</td><td>${esc(m.from)}</td><td>${esc(opName(m.by))}</td><td>${esc(m.note)}</td><td><button class="btn ghost sm adm" onclick="delM('${m.id}')">Delete</button></td></tr>`).join('')}</table>`:EMPTY;
+  $('#i_list').innerHTML=db.issues.length?[...db.issues].sort((a,b)=>b.t-a.t).map(i=>`<div class="iss ${i.status}"><div class="row" style="margin:0"><b>${i.date} · ${esc(opName(i.by))}</b><span class="tag ${i.status==='solved'?'paid':'due'}">${i.status==='solved'?'Solved':'Open'}</span></div><p><small>PROBLEM</small>${esc(i.problem)}</p><p><small>FINDING</small>${esc(i.finding)||'-'}</p><p><small>SOLVING</small>${esc(i.solution)||'-'}</p><button class="btn ghost sm" onclick="updI('${i.id}')">Update finding / solving</button> <button class="btn ghost sm adm" onclick="delI('${i.id}')">Delete</button></div>`).join(''):EMPTY;
+  $('#u_list').innerHTML=`<table><tr><th>Name</th><th>Username</th><th>Role</th><th></th></tr>${db.users.map(u=>`<tr><td>${esc(u.name||u.user)}</td><td>${esc(u.user)}</td><td>${u.role==='admin'?'Admin':'Operator'}</td><td><button class="btn ghost sm" onclick="resU('${u.user}')">Reset password</button> <button class="btn ghost sm" onclick="delU('${u.user}')">Delete</button></td></tr>`).join('')}</table>`;
   // customer select
   const sel=$('#e_cid'),cur=sel.value;
   sel.innerHTML=db.customers.length?db.customers.map(c=>`<option value="${c.id}">${esc(c.name)} (${esc(c.card)})</option>`).join(''):'<option value="">Add a customer first</option>';
@@ -233,19 +290,20 @@ function render(){
   // customers
   const q=$('#c_q').value.toLowerCase();
   const cs=db.customers.filter(c=>(c.name+c.card).toLowerCase().includes(q));
-  $('#cList').innerHTML=cs.length?`<div class="cards">${cs.map(c=>{const rc=sumT(db.txns.filter(x=>x.cid===c.id),['recharge']),dv=due[c.id]||0;return`<div class="wc"><div class="wc-top"><span>WATER CARD</span><b>${esc(c.card)}</b></div><div class="wc-name">${esc(c.name)}</div><div class="wc-sub">${esc(c.phone)}${c.phone&&c.addr?' · ':''}${esc(c.addr)}</div><div class="wc-foot"><div><small>Recharge</small><b>${money(rc)}</b></div><div><small>Due</small><b class="${dv>0.5?'dueTxt':''}">${money(dv)}</b></div><button class="adm" onclick="delC('${c.id}')" aria-label="Delete">✕</button></div></div>`}).join('')}</div>`:'<div class="empty">No customers found.</div>';
+  $('#cList').innerHTML=cs.length?`<div class="cards">${cs.map(c=>{const sl=db.txns.find(x=>x.type==='sell'&&x.cid===c.id),dv=due[c.id]||0;return`<div class="wc"><div class="wc-top"><span>WATER CARD</span><b>${esc(c.card)}</b></div><div class="wc-name">${esc(c.name)}</div><div class="wc-sub">${esc(c.phone)}${c.phone&&c.addr?' · ':''}${esc(c.addr)}</div><div class="wc-foot"><div><small>Card sold${sl?' · '+sl.date:''}</small><b>${money(sl?sl.amount:0)}</b></div><div><small>Bill due</small><b class="${dv>0.5?'dueTxt':''}">${money(dv)}</b></div><button class="adm" onclick="delC('${c.id}')" aria-label="Delete">✕</button></div></div>`}).join('')}</div>`:'<div class="empty">No customers found.</div>';
   // history
   const hs=[...ents].sort((a,b)=>b.month.localeCompare(a.month)||b.t-a.t);
   $('#hList').innerHTML=hs.length?`<table><tr><th>Month</th><th>Customer</th><th>Prev</th><th>Curr</th><th>Units</th><th>Bill</th><th>Paid</th><th>Status</th><th></th></tr>${hs.map(e=>{const b=bill(e),d=b-e.paid;return`<tr><td>${e.month}</td><td>${esc(cname(e.cid))}</td><td>${e.prev}</td><td>${e.curr}</td><td>${e.curr-e.prev}</td><td>${money(b)}</td><td>${money(e.paid)}</td><td><span class="tag ${d>0.5?'due':'paid'}">${d>0.5?'Due '+money(d):'Paid'}</span></td><td><button class="btn ghost sm adm" onclick="delE('${e.id}')">Delete</button></td></tr>`}).join('')}</table>`:'<div class="empty">No entries yet.</div>';
 }
-window.delC=id=>{if(confirm('Delete this customer and all their entries?')){db.customers=db.customers.filter(c=>c.id!==id);db.entries=db.entries.filter(e=>e.cid!==id);save();render()}};
+window.delC=id=>{if(confirm('Delete this customer and all their entries?')){db.customers=db.customers.filter(c=>c.id!==id);db.entries=db.entries.filter(e=>e.cid!==id);db.txns=db.txns.filter(x=>!(x.cid===id&&x.type==='sell'));save();render()}};
 window.delE=id=>{if(confirm('Delete this entry?')){db.entries=db.entries.filter(e=>e.id!==id);save();render()}};
 
 $('#cform').onsubmit=ev=>{ev.preventDefault();
   const card=$('#c_card').value.trim();
   if(db.customers.some(c=>c.card===card))return toast('Card number already exists');
-  db.customers.push({id:uid(),name:$('#c_name').value.trim(),card,phone:$('#c_phone').value.trim(),addr:$('#c_addr').value.trim()});
-  save();ev.target.reset();render();toast('Customer saved')};
+  const c={id:uid(),name:$('#c_name').value.trim(),card,phone:$('#c_phone').value.trim(),addr:$('#c_addr').value.trim()},price=+$('#c_price').value||0;
+  db.customers.push(c);addTx({date:$('#c_date').value||today(),type:'sell',cid:c.id,card,qty:1,amount:price,note:''});db.price=price;save();
+  ev.target.reset();dateFill();$('#c_price').value=price;render();toast('Customer added, card sold')};
 
 function pv(){const p=+$('#e_prev').value,c=+$('#e_curr').value,r=+$('#e_rate').value;
   $('#e_prev_box').innerHTML=c<p?'Current reading must be higher than previous.':`Usage <b>${c-p} units</b> &nbsp; Bill <b>${money((c-p)*r)}</b>`}
@@ -270,26 +328,36 @@ $('#csv').onclick=()=>{const rows=[['Month','Customer','Card','Prev','Curr','Uni
   dl('water-entries.csv',rows.map(r=>r.map(v=>`"${String(v??'').replace(/"/g,'""')}"`).join(',')).join('\n'),'text/csv')};
 $('#bk').onclick=()=>dl('water-backup.json',JSON.stringify(db),'application/json');
 $('#rs').onclick=()=>$('#rsf').click();
-$('#rsf').onchange=ev=>{const f=ev.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const d=JSON.parse(r.result);if(!d.customers||!d.entries)throw 0;d.txns=d.txns||[];d.users=d.users&&d.users.length?d.users:db.users;db=d;save();render();toast('Backup restored')}catch(e){toast('Invalid backup file')}};r.readAsText(f)};
+$('#rsf').onchange=ev=>{const f=ev.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const d=JSON.parse(r.result);if(!d.customers||!d.entries)throw 0;d.txns=d.txns||[];d.mats=d.mats||[];d.issues=d.issues||[];d.openStock=d.openStock||0;d.users=d.users&&d.users.length?d.users:db.users;db=d;save();render();toast('Backup restored')}catch(e){toast('Invalid backup file')}};r.readAsText(f)};
 
-const TL={sell:'Card sell',replace:'Replace',damage:'Damage',recharge:'Recharge'};
+const TL={sell:'Card sell',replace:'Replace',damage:'Damage',recharge:'Recharge',receive:'Received'},EMPTY='<div class="empty">No entry yet.</div>';
 const today=()=>{const d=new Date();return new Date(d-d.getTimezoneOffset()*6e4).toISOString().slice(0,10)};
 const tx=d=>db.txns.filter(x=>x.date===d);
-const sumT=(a,t)=>a.filter(x=>t.includes(x.type)).reduce((s,x)=>s+x.amount,0);
-function fillD(){const t=$('#d_type').value;
- document.querySelectorAll('#dform [data-for]').forEach(l=>l.classList.toggle('hide',!l.dataset.for.split(' ').includes(t)));
- $('#d_amt_l').textContent={sell:'Card price',replace:'Replace fee',damage:'Loss amount',recharge:'Recharge amount'}[t];
- $('#d_card_l').textContent=t==='replace'?'Old card number':'Card number'}
-$('#d_type').onchange=()=>{fillD();render()};$('#d_day').onchange=render;
-$('#dform').onsubmit=ev=>{ev.preventDefault();
- const t=$('#d_type').value,x={id:uid(),date:$('#d_date').value||today(),type:t,cid:$('#d_cid').value,card:$('#d_card').value.trim(),nw:$('#d_new').value.trim(),amount:+$('#d_amt').value||0,note:$('#d_note').value.trim(),by:me.user};
- if((t==='replace'||t==='recharge')&&!x.cid)return toast('Select a customer');
- if(t!=='recharge'&&!x.card)return toast('Enter card number');
- if(t==='replace'){if(!x.nw)return toast('Enter new card number');if(db.customers.some(c=>c.card===x.nw))return toast('New card already in use')}
- if(t==='recharge'&&x.amount<=0)return toast('Enter recharge amount');
- if(t==='replace'){const c=db.customers.find(c=>c.id===x.cid);if(c)c.card=x.nw}
- db.txns.push(x);save();ev.target.reset();$('#d_type').value=t;$('#d_date').value=x.date;$('#d_day').value=x.date;fillD();render();toast(TL[t]+' saved')};
-window.delT=id=>{if(confirm('Delete this entry?')){db.txns=db.txns.filter(x=>x.id!==id);save();render()}};
+const sumT=(a,t)=>a.filter(x=>t.includes(x.type)).reduce((s,x)=>s+(x.amount||0),0);
+const dlt=x=>x.type==='receive'?(x.qty||0):(x.type==='sell'||x.type==='replace')?-1:(x.type==='damage'&&x.src==='stock')?-(x.qty||1):0;
+const stock=(D,inc)=>(+db.openStock||0)+db.txns.filter(x=>inc?x.date<=D:x.date<D).reduce((a,x)=>a+dlt(x),0);
+const opName=u=>{const x=db.users.find(y=>y.user===u);return x?(x.name||x.user):(u||'')};
+const dateFill=()=>document.querySelectorAll('input.td').forEach(i=>{if(!i.value)i.value=today()});
+function addTx(o){db.txns.push(Object.assign({id:uid(),by:me.user},o));save()}
+function txTable(a){return a.length?`<table><tr><th>Date</th><th>Type</th><th>Detail</th><th>Card</th><th>Amount</th><th>Note</th><th>By</th><th></th></tr>${a.map(x=>`<tr><td>${x.date}</td><td>${TL[x.type]}</td><td>${x.cid?esc(cname(x.cid)):x.type==='receive'?x.qty+' cards '+esc(x.from||''):x.type==='damage'?(x.src==='stock'?'Stock card':'Customer card'):''}</td><td>${esc(x.card)}${x.nw?' → '+esc(x.nw):''}</td><td>${money(x.amount)}</td><td>${esc(x.note)}</td><td>${esc(opName(x.by))}</td><td><button class="btn ghost sm adm" onclick="delT('${x.id}')">Delete</button></td></tr>`).join('')}</table>`:EMPTY}
+const dv=i=>$('#'+i).value.trim();
+$('#d_day').onchange=render;
+$('#rgform').onsubmit=ev=>{ev.preventDefault();const d=dv('rg_date')||today();addTx({date:d,type:'recharge',cid:'',amount:+$('#rg_amt').value||0,note:dv('rg_note')});ev.target.reset();$('#d_day').value=d;dateFill();render();toast('Recharge saved')};
+$('#stkform').onsubmit=ev=>{ev.preventDefault();db.openStock=+$('#os').value||0;save();render();toast('Starting stock saved')};
+$('#rp_cid').onchange=()=>{const c=db.customers.find(c=>c.id===$('#rp_cid').value);$('#rp_old').value=c?c.card:''};
+$('#dm_cid').onchange=()=>{const c=db.customers.find(c=>c.id===$('#dm_cid').value);if(c){$('#dm_card').value=c.card;$('#dm_src').value='customer'}};
+$('#rform').onsubmit=ev=>{ev.preventDefault();const c=db.customers.find(c=>c.id===$('#rp_cid').value),nw=dv('rp_new');
+ if(!c)return toast('Select a customer');if(!nw)return toast('Enter new card number');if(db.customers.some(x=>x.card===nw))return toast('New card already in use');
+ addTx({date:dv('rp_date')||today(),type:'replace',cid:c.id,card:c.card,nw,amount:+$('#rp_fee').value||0,note:dv('rp_note')});c.card=nw;save();ev.target.reset();dateFill();render();toast('Card replaced')};
+$('#dmform').onsubmit=ev=>{ev.preventDefault();if(!dv('dm_card'))return toast('Enter card number');
+ addTx({date:dv('dm_date')||today(),type:'damage',cid:$('#dm_cid').value,card:dv('dm_card'),src:$('#dm_src').value,qty:1,amount:+$('#dm_loss').value||0,note:dv('dm_note')});ev.target.reset();dateFill();render();toast('Damage saved')};
+$('#rcform').onsubmit=ev=>{ev.preventDefault();addTx({date:dv('rc_date')||today(),type:'receive',qty:+$('#rc_qty').value||0,from:dv('rc_from'),amount:0,note:dv('rc_note')});ev.target.reset();dateFill();render();toast('Cards received')};
+$('#mform').onsubmit=ev=>{ev.preventDefault();db.mats.push({id:uid(),t:Date.now(),date:dv('mt_date')||today(),item:dv('mt_item'),qty:+$('#mt_qty').value||0,unit:dv('mt_unit'),from:dv('mt_from'),note:dv('mt_note'),by:me.user});save();ev.target.reset();$('#mt_unit').value='pcs';dateFill();render();toast('Material saved')};
+$('#iform').onsubmit=ev=>{ev.preventDefault();const sol=dv('is_solution');db.issues.push({id:uid(),t:Date.now(),date:dv('is_date')||today(),problem:dv('is_problem'),finding:dv('is_finding'),solution:sol,status:sol?'solved':'open',by:me.user});save();ev.target.reset();dateFill();render();toast('Saved')};
+window.updI=id=>{const i=db.issues.find(x=>x.id===id);if(!i)return;const f=prompt('Finding',i.finding||'');if(f===null)return;const s=prompt('Solving (leave empty if not solved yet)',i.solution||'');if(s===null)return;i.finding=f.trim();i.solution=s.trim();i.status=i.solution?'solved':'open';save();render()};
+const del=(k,id)=>{if(confirm('Delete this entry?')){db[k]=db[k].filter(x=>x.id!==id);save();render()}};
+window.delT=id=>del('txns',id);window.delM=id=>del('mats',id);window.delI=id=>del('issues',id);
+window.resU=u=>{const p=prompt('New password for '+u+' (min 4 characters)');if(!p||p.length<4)return;db.users.find(y=>y.user===u).hash=sha256(u+':'+p);save();toast('Password updated')};
 window.delU=u=>{if(u===me.user)return toast("Can't delete yourself");if(confirm('Delete user '+u+'?')){db.users=db.users.filter(x=>x.user!==u);save();render()}};
 function sha256(str){const b=unescape(encodeURIComponent(str)),l=b.length,rr=(v,a)=>(v>>>a)|(v<<(32-a)),P=[],K=[];let H=[];
  for(let c=2;P.length<64;c++)if(P.every(p=>c%p))P.push(c);
@@ -304,18 +372,18 @@ function sha256(str){const b=unescape(encodeURIComponent(str)),l=b.length,rr=(v,
   H=[H[0]+a|0,H[1]+b2|0,H[2]+c|0,H[3]+d|0,H[4]+e|0,H[5]+f|0,H[6]+g|0,H[7]+h|0]}
  return H.map(v=>(v>>>0).toString(16).padStart(8,'0')).join('')}
 async function hash(s){return sha256(s)}
-$('#uform').onsubmit=async ev=>{ev.preventDefault();const u=$('#u_user').value.trim().toLowerCase();if(db.users.some(x=>x.user===u))return toast('Username exists');db.users.push({user:u,hash:await hash(u+':'+$('#u_pass').value),role:$('#u_role').value});save();ev.target.reset();render();toast('User added')};
+$('#uform').onsubmit=ev=>{ev.preventDefault();const u=dv('u_user').toLowerCase();if(db.users.some(x=>x.user===u))return toast('Username exists');db.users.push({name:dv('u_name'),user:u,hash:sha256(u+':'+$('#u_pass').value),role:$('#u_role').value});save();ev.target.reset();render();toast('Operator added')};
 let me=null;try{me=JSON.parse(sessionStorage.getItem('wcUser'))}catch(e){}
 function gate(){const setup=!db.users.length;
  $('#login').classList.toggle('hide',!!me);$('#app').classList.toggle('hide',!me);
  if(!me){$('#l_title').textContent=setup?'Create admin account':'Login';$('#l_btn').textContent=setup?'Create & enter':'Login';return}
- document.body.classList.toggle('staff',me.role!=='admin');$('#hi').textContent='Hi, '+me.user;$('#dt').textContent=new Date().toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'});$('#who').textContent=me.user+' ('+me.role+')';fillD();render()}
+ document.body.classList.toggle('staff',me.role!=='admin');$('#hi').textContent='Hi, '+me.user;$('#dt').textContent=new Date().toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'});$('#who').textContent=(me.name||me.user)+' · '+(me.role==='admin'?'Admin':'Operator');dateFill();$('#c_price').value=db.price||'';render()}
 $('#lform').onsubmit=async ev=>{ev.preventDefault();const u=$('#l_user').value.trim().toLowerCase(),pw=$('#l_pass').value,h=await hash(u+':'+pw);
  if(!db.users.length){if(pw.length<4)return toast('Password min 4 characters');db.users.push({user:u,hash:h,role:'admin'});save()}
  const f=db.users.find(x=>x.user===u&&x.hash===h);if(!f)return toast('Wrong username or password');
- me={user:f.user,role:f.role};try{sessionStorage.setItem('wcUser',JSON.stringify(me))}catch(e){}ev.target.reset();gate()};
+ me={user:f.user,name:f.name||f.user,role:f.role};try{sessionStorage.setItem('wcUser',JSON.stringify(me))}catch(e){}ev.target.reset();gate()};
 $('#out').onclick=()=>{me=null;try{sessionStorage.removeItem('wcUser')}catch(e){}gate()};
-document.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>{const [t,ty]=b.dataset.go.split(':');document.querySelector('#nav [data-t='+t+']').click();if(ty){$('#d_type').value=ty;fillD();render()}window.scrollTo(0,0)});
+document.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>{document.querySelector('#nav [data-t='+b.dataset.go+']').click();window.scrollTo(0,0)});
 gate();
 </script>
 </body>
