@@ -4,68 +4,105 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Water Card Dashboard</title>
-<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Bricolage+Grotesque:wght@600;700;800&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#EEF4F5;--card:#fff;--ink:#12303F;--mute:#5E7886;--line:#D5E2E6;--aqua:#17879E;--aqua2:#0E5E70;--paid:#2A8A55;--due:#C46A12;--r:10px}
-@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#0C1D26;--card:#13303D;--ink:#E4F0F3;--mute:#8FAAB6;--line:#25485A;--aqua:#4DC0D8;--aqua2:#7FD6E8;--paid:#5CC88A;--due:#F0A053}}
-*{box-sizing:border-box}
+:root{--bg:#F0F8FA;--card:#fff;--ink:#062A3B;--mute:#5F7F8E;--line:#D9EAEF;--aqua:#0098BA;--deep:#06405A;--foam:#E0F4F9;--paid:#169A66;--due:#E2552F;--r:18px;--f2:'Bricolage Grotesque','Hind Siliguri',system-ui,sans-serif}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#04141D;--card:#0B2634;--ink:#E6F5F9;--mute:#86A9B8;--line:#174355;--aqua:#35D0EE;--deep:#062B3D;--foam:#12394A;--paid:#4ADE9E;--due:#FF8A67}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0}
-body{font-family:'Hind Siliguri',system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:15px;padding:env(safe-area-inset-top,0) 0 env(safe-area-inset-bottom,0)}
-header{background:var(--aqua2);color:#fff;padding:18px 16px 14px}
-header h1{margin:0;font-size:20px;font-weight:700}
-header p{margin:2px 0 0;opacity:.8;font-size:13px}
-nav{display:flex;gap:4px;background:var(--card);border-bottom:1px solid var(--line);padding:0 8px;position:sticky;top:0;z-index:5;overflow-x:auto}
-nav button{border:0;background:none;color:var(--mute);font:600 14px inherit;font-family:inherit;padding:12px 14px;border-bottom:3px solid transparent;cursor:pointer;white-space:nowrap}
-nav button.on{color:var(--aqua);border-color:var(--aqua)}
-main{max-width:980px;margin:0 auto;padding:16px}
+body{font-family:'Hind Siliguri',system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:15px}
+header{background:radial-gradient(circle at 85% 20%,rgba(255,255,255,.16) 0 60px,transparent 61px),radial-gradient(circle at 70% 70%,rgba(255,255,255,.08) 0 36px,transparent 37px),linear-gradient(155deg,#04324A,#0A7C9B 65%,#12B4D3);color:#fff;padding:calc(env(safe-area-inset-top,0px) + 18px) 18px 0}
+.hd{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;max-width:980px;margin:0 auto;padding-bottom:20px}
+header small{letter-spacing:.16em;font-size:11px;opacity:.75;font-weight:600}
+header h1{margin:4px 0 2px;font:800 26px var(--f2)}
+header p{margin:0;opacity:.8;font-size:13px}
+.who{text-align:right;font-size:12px;opacity:.95}.who .btn.ghost{color:#fff;border-color:rgba(255,255,255,.45);margin-top:6px}
+.wave{display:block;width:100%;height:22px;fill:var(--bg);margin-bottom:-1px}
+nav{position:fixed;left:0;right:0;bottom:0;z-index:10;display:flex;gap:2px;background:color-mix(in srgb,var(--card) 93%,transparent);backdrop-filter:blur(14px);border-top:1px solid var(--line);padding:6px 6px calc(6px + env(safe-area-inset-bottom,0px));overflow-x:auto}
+nav button{flex:1 0 66px;display:flex;flex-direction:column;align-items:center;gap:3px;border:0;background:none;color:var(--mute);font:600 11px/1 'Hind Siliguri',sans-serif;padding:7px 4px;border-radius:14px;cursor:pointer;white-space:nowrap}
+nav button i{font-style:normal;font-size:20px;filter:grayscale(1);opacity:.65;transition:.2s}
+nav button.on{color:var(--aqua);background:var(--foam)}nav button.on i{filter:none;opacity:1;transform:translateY(-1px) scale(1.1)}
+@media(min-width:760px){nav{position:sticky;top:0;bottom:auto;border-top:0;border-bottom:1px solid var(--line);justify-content:center;padding:8px}nav button{flex:0 0 auto;flex-direction:row;gap:7px;font-size:14px;padding:9px 15px}}
+main{max-width:980px;margin:0 auto;padding:6px 16px 100px}
+section{animation:in .28s ease}
+@keyframes in{from{opacity:0;transform:translateY(8px)}}
+.quick{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:8px 0 14px}
+.quick button{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px 4px;display:flex;flex-direction:column;align-items:center;gap:6px;font:600 12px 'Hind Siliguri',sans-serif;color:var(--ink);cursor:pointer;transition:.15s}
+.quick button i{font-style:normal;font-size:22px;background:var(--foam);width:42px;height:42px;border-radius:14px;display:grid;place-items:center}
+.quick button:active{transform:scale(.95)}
 .grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
-.stat{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px}
-.stat b{display:block;font-size:24px;font-weight:700}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:15px;position:relative;overflow:hidden}
+.stat b{display:block;font:800 25px var(--f2);letter-spacing:-.02em}
 .stat span{color:var(--mute);font-size:13px}
-.stat.hero{background:var(--aqua2);color:#fff;border:0}.stat.hero span{color:#cfe8ee}
+.stat.hero{background:linear-gradient(135deg,#0A8DB0,#06405A);color:#fff;border:0;box-shadow:0 10px 24px -10px rgba(6,64,90,.6)}
+.stat.hero span{color:#CBEAF2}
+.stat.hero::after{content:'';position:absolute;right:-26px;top:-26px;width:90px;height:90px;border-radius:50%;background:rgba(255,255,255,.14)}
 .box{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px;margin-top:14px}
-h2{font-size:16px;margin:0 0 12px}
-form{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
-label{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--mute)}
-input,select{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:9px 10px;width:100%}
-input:focus,select:focus,button:focus-visible{outline:2px solid var(--aqua);outline-offset:1px}
-.btn{background:var(--aqua);color:#fff;border:0;border-radius:8px;padding:10px 16px;font:600 14px inherit;font-family:inherit;cursor:pointer}
-.btn.ghost{background:none;color:var(--aqua);border:1px solid var(--line)}
-.btn.sm{padding:5px 10px;font-size:12px}
+h2{font:700 17px var(--f2);margin:0 0 12px}
+form{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+label{display:flex;flex-direction:column;gap:5px;font-size:12px;color:var(--mute);font-weight:600;letter-spacing:.02em}
+input,select{font:inherit;font-size:15px;color:var(--ink);background:var(--bg);border:1.5px solid var(--line);border-radius:12px;padding:11px 12px;width:100%;transition:.15s}
+input:focus,select:focus{outline:0;border-color:var(--aqua);box-shadow:0 0 0 4px color-mix(in srgb,var(--aqua) 18%,transparent)}
+.btn{background:linear-gradient(135deg,var(--aqua),#0A6E8E);color:#fff;border:0;border-radius:13px;padding:12px 20px;font:700 14px 'Hind Siliguri',sans-serif;cursor:pointer;box-shadow:0 6px 14px -6px rgba(0,120,160,.6);transition:.15s}
+.btn:active{transform:scale(.97)}
+.btn.ghost{background:none;color:var(--aqua);border:1.5px solid var(--line);box-shadow:none}
+.btn.sm{padding:6px 11px;font-size:12px;border-radius:10px}
 .full{grid-column:1/-1}
-.preview{grid-column:1/-1;background:var(--bg);border-radius:8px;padding:10px 12px;color:var(--mute)}
+.preview{grid-column:1/-1;background:var(--foam);border-radius:12px;padding:11px 13px;color:var(--mute)}
 .preview b{color:var(--ink)}
 .wrap{overflow-x:auto}
 table{border-collapse:collapse;width:100%;min-width:560px}
-th,td{text-align:left;padding:9px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
-th{color:var(--mute);font-weight:500;font-size:13px}
-.tag{padding:2px 9px;border-radius:99px;font-size:12px;font-weight:600}
-.tag.paid{background:color-mix(in srgb,var(--paid) 18%,transparent);color:var(--paid)}
-.tag.due{background:color-mix(in srgb,var(--due) 18%,transparent);color:var(--due)}
-.bars{display:flex;align-items:flex-end;gap:8px;height:130px;padding-top:8px}
-.bar{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;font-size:11px;color:var(--mute)}
-.bar i{display:block;width:100%;max-width:44px;background:var(--aqua);border-radius:5px 5px 0 0;min-height:2px}
-.bar em{font-style:normal;color:var(--ink);font-weight:600;font-size:11px}
-.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:space-between;margin-bottom:10px}
-.empty{color:var(--mute);padding:18px 0;text-align:center}
-.toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:9px 16px;border-radius:99px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .2s}
-.toast.show{opacity:1}
-.hide{display:none}#login.hide{display:none}#login{position:fixed;inset:0;background:var(--aqua2);display:flex;align-items:center;justify-content:center;padding:16px;z-index:20}#login .box{width:100%;max-width:340px;margin:0}body.staff .adm{display:none!important}
+th,td{text-align:left;padding:11px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
+th{color:var(--mute);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.08em}
+tr:hover td{background:var(--foam)}
+.tag{padding:3px 10px;border-radius:99px;font-size:12px;font-weight:700}
+.tag.paid{background:color-mix(in srgb,var(--paid) 16%,transparent);color:var(--paid)}
+.tag.due{background:color-mix(in srgb,var(--due) 16%,transparent);color:var(--due)}
+.bars{display:flex;align-items:flex-end;gap:10px;height:150px;padding-top:8px}
+.bar{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;font-size:11px;color:var(--mute);gap:3px}
+.bar i{display:block;width:100%;max-width:46px;background:linear-gradient(var(--aqua),var(--deep));border-radius:10px 10px 4px 4px;min-height:3px;transform-origin:bottom;animation:grow .6s ease}
+@keyframes grow{from{transform:scaleY(0)}}
+.bar em{font-style:normal;color:var(--ink);font-weight:700}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:space-between;margin-bottom:12px}
+.empty{color:var(--mute);padding:22px 0;text-align:center}
+.empty::before{content:'💧';display:block;font-size:30px;opacity:.55;margin-bottom:4px}
+.cards{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}
+.wc{position:relative;overflow:hidden;color:#fff;border-radius:20px;padding:16px;background:linear-gradient(135deg,#0E94B8,#06405A);box-shadow:0 12px 24px -12px rgba(6,64,90,.7)}
+.wc::before,.wc::after{content:'';position:absolute;border-radius:50%;background:rgba(255,255,255,.1)}
+.wc::before{right:-40px;top:-46px;width:150px;height:150px}.wc::after{left:-34px;bottom:-70px;width:150px;height:150px;background:rgba(255,255,255,.06)}
+.wc>*{position:relative;z-index:1}
+.wc-top{display:flex;justify-content:space-between;align-items:center;font-size:10px;letter-spacing:.18em;opacity:.9}.wc-top b{font:700 15px var(--f2);letter-spacing:.08em}
+.wc-name{font:700 20px var(--f2);margin-top:16px}.wc-sub{font-size:12px;opacity:.75;min-height:17px}
+.wc-foot{display:flex;gap:20px;align-items:flex-end;margin-top:14px}.wc-foot small{display:block;font-size:11px;opacity:.7}.wc-foot b{font:700 17px var(--f2)}
+.wc-foot button{margin-left:auto;background:rgba(255,255,255,.18);border:0;color:#fff;border-radius:10px;width:32px;height:32px;cursor:pointer}
+.dueTxt{color:#FFC4B0}
+.toast{position:fixed;left:50%;bottom:92px;transform:translateX(-50%) translateY(10px);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:99px;font-size:14px;font-weight:600;opacity:0;pointer-events:none;transition:.25s;z-index:30;box-shadow:0 8px 20px rgba(0,0,0,.3)}
+.toast.show{opacity:1;transform:translateX(-50%)}
+.hide{display:none}
+#login.hide{display:none}
+#login{position:fixed;inset:0;background:radial-gradient(circle at 80% 10%,rgba(255,255,255,.18) 0 90px,transparent 91px),radial-gradient(circle at 10% 90%,rgba(255,255,255,.1) 0 120px,transparent 121px),linear-gradient(160deg,#04324A,#0A7C9B 60%,#12B4D3);display:flex;align-items:center;justify-content:center;padding:16px;z-index:20}
+#login .box{width:100%;max-width:350px;margin:0;padding:26px 22px;text-align:center;box-shadow:0 24px 50px -20px rgba(0,0,0,.5)}
+#login form{text-align:left}
+.logo{width:62px;height:62px;border-radius:20px;margin:-58px auto 12px;background:linear-gradient(135deg,#12B4D3,#06405A);display:grid;place-items:center;font-size:30px;box-shadow:0 10px 20px -8px rgba(6,64,90,.7)}
+#login p{margin:-6px 0 14px;color:var(--mute);font-size:13px}
+body.staff .adm{display:none!important}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
 <body>
-<div id="app" class="hide"><header style="display:flex;justify-content:space-between;align-items:center;gap:10px"><div><h1>Water Card Dashboard</h1><p>Cards, daily sell, recharge, monthly hisab</p></div><div style="text-align:right;font-size:13px"><span id="who"></span><br><button class="btn ghost sm" id="out" style="color:#fff;border-color:#ffffff77">Logout</button></div></header>
+<div id="app" class="hide"><header><div class="hd"><div><small>WATER CARD SYSTEM</small><h1 id="hi">Dashboard</h1><p id="dt"></p></div><div class="who"><span id="who"></span><br><button class="btn ghost sm" id="out">Logout</button></div></div><svg class="wave" viewBox="0 0 400 24" preserveAspectRatio="none"><path d="M0 12C60 0 120 24 200 12S340 0 400 12V24H0Z"/></svg></header>
 <nav id="nav">
-  <button data-t="dash" class="on">Dashboard</button>
-  <button data-t="entry">Add entry</button>
-  <button data-t="day">Daily</button>
-  <button data-t="mon">Monthly</button>
-  <button data-t="cust">Customers</button>
-  <button data-t="hist">All entries</button>
-  <button data-t="usr" class="adm">Users</button>
+  <button data-t="dash" class="on"><i>🏠</i>Home</button>
+  <button data-t="day"><i>🪪</i>Daily</button>
+  <button data-t="entry"><i>🧾</i>Entry</button>
+  <button data-t="mon"><i>📅</i>Monthly</button>
+  <button data-t="cust"><i>👥</i>Customers</button>
+  <button data-t="hist"><i>📋</i>History</button>
+  <button data-t="usr" class="adm"><i>🔐</i>Users</button>
 </nav>
 <main>
 <section id="dash">
+  <div class="quick"><button data-go="day:sell"><i>🪪</i>Sell card</button><button data-go="day:recharge"><i>💧</i>Recharge</button><button data-go="entry"><i>🧾</i>Meter</button><button data-go="cust"><i>👤</i>Customer</button></div>
   <div class="grid" id="stats"></div>
   <div class="box"><h2>Usage by month (units)</h2><div class="bars" id="bars"></div></div>
   <div class="box"><h2>Customers with due</h2><div class="wrap" id="dueList"></div></div>
@@ -135,7 +172,7 @@ th{color:var(--mute);font-weight:500;font-size:13px}
 </section>
 </main></div>
 <div class="toast" id="toast"></div>
-<div id="login"><div class="box"><h2 id="l_title">Login</h2><form id="lform" style="grid-template-columns:1fr"><label>Username<input id="l_user" autocomplete="username" required></label><label>Password<input id="l_pass" type="password" autocomplete="current-password" required></label><button class="btn" id="l_btn" type="submit">Login</button></form></div></div>
+<div id="login"><div class="box"><div class="logo">💧</div><h2 id="l_title">Login</h2><p>Water Card System</p><form id="lform" style="grid-template-columns:1fr"><label>Username<input id="l_user" autocomplete="username" required></label><label>Password<input id="l_pass" type="password" autocomplete="current-password" required></label><button class="btn" id="l_btn" type="submit">Login</button></form></div></div>
 
 <script>
 const $=s=>document.querySelector(s);
@@ -196,7 +233,7 @@ function render(){
   // customers
   const q=$('#c_q').value.toLowerCase();
   const cs=db.customers.filter(c=>(c.name+c.card).toLowerCase().includes(q));
-  $('#cList').innerHTML=cs.length?`<table><tr><th>Card</th><th>Name</th><th>Phone</th><th>Address</th><th>Recharge</th><th>Due</th><th></th></tr>${cs.map(c=>`<tr><td>${esc(c.card)}</td><td>${esc(c.name)}</td><td>${esc(c.phone)}</td><td>${esc(c.addr)}</td><td>${money(sumT(db.txns.filter(x=>x.cid===c.id),['recharge']))}</td><td>${money(due[c.id]||0)}</td><td><button class="btn ghost sm adm" onclick="delC('${c.id}')">Delete</button></td></tr>`).join('')}</table>`:'<div class="empty">No customers found.</div>';
+  $('#cList').innerHTML=cs.length?`<div class="cards">${cs.map(c=>{const rc=sumT(db.txns.filter(x=>x.cid===c.id),['recharge']),dv=due[c.id]||0;return`<div class="wc"><div class="wc-top"><span>WATER CARD</span><b>${esc(c.card)}</b></div><div class="wc-name">${esc(c.name)}</div><div class="wc-sub">${esc(c.phone)}${c.phone&&c.addr?' · ':''}${esc(c.addr)}</div><div class="wc-foot"><div><small>Recharge</small><b>${money(rc)}</b></div><div><small>Due</small><b class="${dv>0.5?'dueTxt':''}">${money(dv)}</b></div><button class="adm" onclick="delC('${c.id}')" aria-label="Delete">✕</button></div></div>`}).join('')}</div>`:'<div class="empty">No customers found.</div>';
   // history
   const hs=[...ents].sort((a,b)=>b.month.localeCompare(a.month)||b.t-a.t);
   $('#hList').innerHTML=hs.length?`<table><tr><th>Month</th><th>Customer</th><th>Prev</th><th>Curr</th><th>Units</th><th>Bill</th><th>Paid</th><th>Status</th><th></th></tr>${hs.map(e=>{const b=bill(e),d=b-e.paid;return`<tr><td>${e.month}</td><td>${esc(cname(e.cid))}</td><td>${e.prev}</td><td>${e.curr}</td><td>${e.curr-e.prev}</td><td>${money(b)}</td><td>${money(e.paid)}</td><td><span class="tag ${d>0.5?'due':'paid'}">${d>0.5?'Due '+money(d):'Paid'}</span></td><td><button class="btn ghost sm adm" onclick="delE('${e.id}')">Delete</button></td></tr>`}).join('')}</table>`:'<div class="empty">No entries yet.</div>';
@@ -272,12 +309,13 @@ let me=null;try{me=JSON.parse(sessionStorage.getItem('wcUser'))}catch(e){}
 function gate(){const setup=!db.users.length;
  $('#login').classList.toggle('hide',!!me);$('#app').classList.toggle('hide',!me);
  if(!me){$('#l_title').textContent=setup?'Create admin account':'Login';$('#l_btn').textContent=setup?'Create & enter':'Login';return}
- document.body.classList.toggle('staff',me.role!=='admin');$('#who').textContent=me.user+' ('+me.role+')';fillD();render()}
+ document.body.classList.toggle('staff',me.role!=='admin');$('#hi').textContent='Hi, '+me.user;$('#dt').textContent=new Date().toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'});$('#who').textContent=me.user+' ('+me.role+')';fillD();render()}
 $('#lform').onsubmit=async ev=>{ev.preventDefault();const u=$('#l_user').value.trim().toLowerCase(),pw=$('#l_pass').value,h=await hash(u+':'+pw);
  if(!db.users.length){if(pw.length<4)return toast('Password min 4 characters');db.users.push({user:u,hash:h,role:'admin'});save()}
  const f=db.users.find(x=>x.user===u&&x.hash===h);if(!f)return toast('Wrong username or password');
  me={user:f.user,role:f.role};try{sessionStorage.setItem('wcUser',JSON.stringify(me))}catch(e){}ev.target.reset();gate()};
 $('#out').onclick=()=>{me=null;try{sessionStorage.removeItem('wcUser')}catch(e){}gate()};
+document.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>{const [t,ty]=b.dataset.go.split(':');document.querySelector('#nav [data-t='+t+']').click();if(ty){$('#d_type').value=ty;fillD();render()}window.scrollTo(0,0)});
 gate();
 </script>
 </body>
